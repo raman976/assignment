@@ -7,7 +7,7 @@ Setup
 Clone the project first.
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/raman976/assignment.git
 cd assignment
 ```
 
