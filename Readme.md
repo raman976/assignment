@@ -1,8 +1,10 @@
-GNSS interference tool
+## GNSS interference tool
 
 This is a small Python app for GNSS signal spectrum visualization and interference analysis. It shows demo cases and custom cases, then compares PSD overlap and SSC between signals.
 
-Setup
+### Setup
+
+**Open terminal**
 
 Clone the project first.
 
@@ -46,7 +48,11 @@ Run the app.
 python main.py
 ```
 
-Pipeline
+The app will be started.
+
+**Note:- If the GUI is not visible please look in the Taskbar of your OS, a icon will be visible please click on it.**
+
+### Pipeline
 
 The app has demo examples with fixed values. The demo tab compares the reference BOC(5,2) signal with MBOC(6,1,1/11) or BPSK(10).
 
