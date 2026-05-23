@@ -314,6 +314,14 @@ class GnssApp:
         except ValueError as e:
             raise ValueError(f"{lbl} must be a number or fraction") from e
 
+    def parse_mbc_weights(self):
+        weight1=self.parse_weight(self.mboc_component1_weight,"MBOC Component 1 weight")
+        weight2=self.parse_weight(self.mboc_component2_weight,"MBOC Component 2 weight")
+        total=weight1+weight2
+        if abs(total-1.0)>1e-9:
+            raise ValueError("MBOC weights must add up to 1")
+        return weight1,weight2
+
     def build_comp_sig(self,fs,n,prefix):
         if prefix=="demo":
             sel=self.demo_comparison_signal.get()
@@ -327,9 +335,11 @@ class GnssApp:
             mul=self.parse_int(self.bpsk_multiple,"BPSK Multiple")
             return generate_bpsk_signal(n,mul*1.023e6,fs),f"BPSK({mul})"
 
+        weight1,weight2=self.parse_mbc_weights()
+
         comps=[
-            {"m":self.parse_int(self.mboc_component1_m,"MBOC Component 1 m"),"n":self.parse_int(self.mboc_component1_n,"MBOC Component 1 n"),"weight":self.parse_weight(self.mboc_component1_weight,"MBOC Component 1 weight")},
-            {"m":self.parse_int(self.mboc_component2_m,"MBOC Component 2 m"),"n":self.parse_int(self.mboc_component2_n,"MBOC Component 2 n"),"weight":self.parse_weight(self.mboc_component2_weight,"MBOC Component 2 weight")},
+            {"m":self.parse_int(self.mboc_component1_m,"MBOC Component 1 m"),"n":self.parse_int(self.mboc_component1_n,"MBOC Component 1 n"),"weight":weight1},
+            {"m":self.parse_int(self.mboc_component2_m,"MBOC Component 2 m"),"n":self.parse_int(self.mboc_component2_n,"MBOC Component 2 n"),"weight":weight2},
         ]
         return generate_mboc(comps,n,fs),"MBOC"
 
