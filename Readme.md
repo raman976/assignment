@@ -2,18 +2,20 @@
 
 This is a small Python app for GNSS signal spectrum visualization and interference analysis. It shows demo cases and custom cases, then compares PSD overlap and SSC between signals.
 
-### Setup
+### [Detailed Project Report](https://docs.google.com/document/d/1OvkTVlbKaXY_EhUf0I-sqjorMGBsRhW4w38ztqyXMIM/edit?usp=sharing)
 
-**Open terminal**
+## Setup
 
-Clone the project first.
+#### Open terminal
+
+#### Clone the project first.
 
 ```bash
 git clone https://github.com/raman976/assignment.git
 cd assignment
 ```
 
-Create a virtual environment.
+#### Create a virtual environment.
 
 macOS and Linux:
 
@@ -36,29 +38,28 @@ python -m venv venv
 venv\Scripts\activate.bat
 ```
 
-Install the dependencies.
+#### Install the dependencies.
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Run the app.
+#### Run the app.
 
 ```bash
 python main.py
 ```
 
-The app will be started.
+#### The app will be started.
 
-**Note:- If the GUI is not visible please look in the Taskbar of your OS, a icon will be visible please click on it.**
+**Note:- If the GUI is not visible please look in the Taskbar of your OS, an icon will be visible please click on it.**
 
-For windows user if the terminal shows dependency errors then please delete the venv and recreate it.
+**For windows, if the terminal shows dependency errors then please delete the venv and recreate it or try directly running from global or check the python version.**
+
+#### For deleting venv in Windows if terminal gives error.
+
+```bash
+rmdir /s /q venv
+```
 
 
-### Pipeline
-
-The app has demo examples with fixed values. The demo tab compares the reference BOC(5,2) signal with MBOC(6,1,1/11) or BPSK(10).
-
-It also has a custom analysis tab where the center frequency, bandwidths, sampling frequency, number of bits, and comparison signal can be changed.
-
-In both cases the app computes the PSD for the two signals, overlays the graphs, and then computes SSC from the overlap inside the receiver bandwidth.
