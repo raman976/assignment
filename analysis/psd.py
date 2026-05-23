@@ -1,21 +1,31 @@
 import numpy as np
+from scipy.signal import welch
+
 
 def compute_psd(signal,fs,center_frequency=0.0):
-    length=len(signal)
-    window=np.hanning(length)
-    windowed_signal=signal*window
-    fft_values=np.fft.fft(windowed_signal)
-    fft_freq=np.fft.fftfreq(length,1/fs)
-    fft_values=np.fft.fftshift(fft_values)
-    fft_freq=np.fft.fftshift(fft_freq)
-    fft_freq=fft_freq+center_frequency
-    psd=np.abs(fft_values)**2
-    max_value=np.max(psd)
-    if max_value==0:
-        normalised_psd=psd
-    else:
-        normalised_psd=psd/max_value
-    return fft_freq,normalised_psd
+    signal=np.asarray(signal)
+    if len(signal)==0:
+        return np.array([]),np.array([])
+
+    nperseg=min(1024,len(signal))
+    freqs,psd=welch(
+        signal,
+        fs=fs,
+        window="hann",
+        nperseg=nperseg,
+        scaling="density",
+        return_onesided=False,
+    )
+
+    freqs=np.fft.fftshift(freqs)
+    psd=np.fft.fftshift(psd)
+    freqs=freqs+center_frequency
+
+    area=np.trapezoid(psd,freqs)
+    if area>0:
+        psd=psd/area
+
+    return freqs,psd
 
 
 def apply_bandwidth(freqs,psd,center_frequency,bandwidth):

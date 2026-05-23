@@ -1,3 +1,4 @@
+import numpy as np
 import tkinter as tk
 from tkinter import messagebox,ttk
 
@@ -360,10 +361,17 @@ class GnssApp:
         comp_psd=comp_psd[:cut]
 
         ssc=compute_ssc(boc_psd,comp_psd,boc_freqs,center_frequency=cf,receiver_bandwidth=rbw)
-        self.result_text.set(f"SSC: {ssc:.6f}\nReference: BOC({m},{k}) vs {comp_lbl}")
-        self.plot_results(boc_freqs,boc_psd,comp_freqs,comp_psd,ssc,comp_lbl,cf,rbw)
 
-    def plot_results(self,boc_freqs,boc_psd,comp_freqs,comp_psd,ssc,comp_lbl,cf,rbw):
+        ssc_db=10*np.log10(ssc) if ssc>0 else float("-inf")
+        ssc_db_text=f"{ssc_db:.6f} dB" if np.isfinite(ssc_db) else "-inf dB"
+
+        self.result_text.set(f"SSC: {ssc:.3e}\nSSC dB: {ssc_db_text}\nReference: BOC({m},{k}) vs {comp_lbl}")
+        self.plot_results(boc_freqs,boc_psd,comp_freqs,comp_psd,ssc,ssc_db,comp_lbl,cf,rbw)
+
+
+
+
+    def plot_results(self,boc_freqs,boc_psd,comp_freqs,comp_psd,ssc,ssc_db,comp_lbl,cf,rbw):
         self.overlap_axis.clear()
 
         self.overlay_freqs_boc=boc_freqs
@@ -377,7 +385,8 @@ class GnssApp:
         hi=cf+rbw/2
         self.overlap_axis.plot(boc_freqs,ov,color="#2ca02c",linewidth=1.2,label="PSD overlap")
         self.overlap_axis.axvspan(lo,hi,color="#d62728",alpha=0.12,label="Receiver band")
-        self.overlap_axis.set_title(f"SSC overlap view  |  SSC = {ssc:.6f}")
+        ssc_db_text=f"{ssc_db:.2f} dB" if np.isfinite(ssc_db) else "-inf dB"
+        self.overlap_axis.set_title(f"SSC overlap   |  SSC = {ssc:.3e}  |  {ssc_db_text}")
         self.overlap_axis.set_xlabel("Frequency (Hz)")
         self.overlap_axis.set_ylabel("PSD product")
         self.overlap_axis.grid(True,alpha=0.3)
@@ -394,6 +403,9 @@ class GnssApp:
         self.configure_slider(cf)
         self.apply_view_window(self.view_center_frequency.get())
         self.canvas.draw_idle()
+
+
+
 
     def configure_slider(self,cf):
         if self.current_freq_min is None or self.current_freq_max is None:
@@ -418,6 +430,8 @@ class GnssApp:
         self.view_center_frequency.set(center)
         self.view_slider_text.set(f"Slider  |  Value: {center/1e6:.3f} MHz")
 
+
+
     def apply_view_window(self,cf):
         if self.current_freq_min is None or self.current_freq_max is None:
             return
@@ -436,6 +450,8 @@ class GnssApp:
         self.redraw_overlay_axis(lo,hi)
         self.overlap_axis.set_xlim(lo,hi)
         self.canvas.draw_idle()
+
+
 
     def redraw_overlay_axis(self,lo,hi):
         if self.overlay_freqs_boc is None or self.overlay_freqs_comp is None:
@@ -462,6 +478,8 @@ class GnssApp:
         self.overlay_axis.grid(True,alpha=0.3)
         self.overlay_axis.legend(loc="upper right")
         self.overlay_axis.set_xlim(lo,hi)
+
+
 
     def scale_for_display(self,vals):
         if len(vals)==0:
