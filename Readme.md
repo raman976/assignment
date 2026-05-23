@@ -52,6 +52,9 @@ The app will be started.
 
 **Note:- If the GUI is not visible please look in the Taskbar of your OS, a icon will be visible please click on it.**
 
+For windows user if the terminal shows dependency errors then please delete the venv and recreate it.
+
+
 ### Pipeline
 
 The app has demo examples with fixed values. The demo tab compares the reference BOC(5,2) signal with MBOC(6,1,1/11) or BPSK(10).
