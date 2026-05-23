@@ -23,21 +23,21 @@ class GnssApp:
 
 
 
-        self.demo_center_frequency=tk.StringVar(value="1575.42e6")
+        self.demo_center_frequency=tk.StringVar(value="1575.42")
 
-        self.demo_transmitter_bandwidth=tk.StringVar(value="24e6")
-        self.demo_receiver_bandwidth=tk.StringVar(value="24e6")
-        self.demo_sampling_frequency=tk.StringVar(value="100e6")
+        self.demo_transmitter_bandwidth=tk.StringVar(value="24")
+        self.demo_receiver_bandwidth=tk.StringVar(value="24")
+        self.demo_sampling_frequency=tk.StringVar(value="100")
 
         self.demo_num_bits=tk.StringVar(value="2048")
         self.demo_comparison_signal=tk.StringVar(value="MBOC(6,1,1/11)")
 
 
 
-        self.center_frequency=tk.StringVar(value="1575.42e6")
-        self.transmitter_bandwidth=tk.StringVar(value="24e6")
-        self.receiver_bandwidth=tk.StringVar(value="24e6")
-        self.sampling_frequency=tk.StringVar(value="100e6")
+        self.center_frequency=tk.StringVar(value="1575.42")
+        self.transmitter_bandwidth=tk.StringVar(value="24")
+        self.receiver_bandwidth=tk.StringVar(value="24")
+        self.sampling_frequency=tk.StringVar(value="100")
 
         self.num_bits=tk.StringVar(value="2048")
 
@@ -171,11 +171,11 @@ class GnssApp:
         frm=ttk.LabelFrame(parent,text="Demo Inputs",style="Card.TLabelframe",padding=12)
         frm.pack(fill="x")
 
-        self.add_entry(frm,"Center freq (Hz)",self.demo_center_frequency,0)
-        self.add_entry(frm,"Transmitter Bandwidth (Hz)",self.demo_transmitter_bandwidth,1)
-        self.add_entry(frm,"Receiver Bandwidth (Hz)",self.demo_receiver_bandwidth,2)
+        self.add_entry(frm,"Center freq (MHz)",self.demo_center_frequency,0)
+        self.add_entry(frm,"Transmitter Bandwidth (MHz)",self.demo_transmitter_bandwidth,1)
+        self.add_entry(frm,"Receiver Bandwidth (MHz)",self.demo_receiver_bandwidth,2)
 
-        self.add_entry(frm,"Sampling freq (Hz)",self.demo_sampling_frequency,3)
+        self.add_entry(frm,"Sampling freq (MHz)",self.demo_sampling_frequency,3)
         self.add_entry(frm,"Number of Bits",self.demo_num_bits,4)
 
         ttk.Label(frm,text="Comparison Signal").grid(row=5,column=0,sticky="w",pady=(10,4))
@@ -196,10 +196,10 @@ class GnssApp:
         frm=ttk.LabelFrame(parent,text="Signal Parameters",style="Card.TLabelframe",padding=12)
         frm.pack(fill="x")
 
-        self.add_entry(frm,"Center freq",self.center_frequency,0)
-        self.add_entry(frm,"Transmitter Bandwidth (Hz)",self.transmitter_bandwidth,1)
-        self.add_entry(frm,"Receiver Bandwidth (Hz)",self.receiver_bandwidth,2)
-        self.add_entry(frm,"Sampling freq",self.sampling_frequency,3)
+        self.add_entry(frm,"Center freq (MHz)",self.center_frequency,0)
+        self.add_entry(frm,"Transmitter Bandwidth (MHz)",self.transmitter_bandwidth,1)
+        self.add_entry(frm,"Receiver Bandwidth (MHz)",self.receiver_bandwidth,2)
+        self.add_entry(frm,"Sampling freq (MHz)",self.sampling_frequency,3)
         self.add_entry(frm,"Number of Bits",self.num_bits,4)
 
         bfrm=ttk.LabelFrame(parent,text="Reference BOC(m,n)",style="Card.TLabelframe",padding=12)
@@ -250,19 +250,19 @@ class GnssApp:
 
 
     def load_demo_values(self):
-        self.demo_center_frequency.set("1575.42e6")
-        self.demo_transmitter_bandwidth.set("24e6")
+        self.demo_center_frequency.set("1575.42")
+        self.demo_transmitter_bandwidth.set("24")
 
-        self.demo_receiver_bandwidth.set("24e6")
-        self.demo_sampling_frequency.set("100e6")
+        self.demo_receiver_bandwidth.set("24")
+        self.demo_sampling_frequency.set("100")
         self.demo_num_bits.set("2048")
 
         self.demo_comparison_signal.set("MBOC(6,1,1/11)")
 
-        self.center_frequency.set("1575.42e6")
-        self.transmitter_bandwidth.set("24e6")
-        self.receiver_bandwidth.set("24e6")
-        self.sampling_frequency.set("100e6")
+        self.center_frequency.set("1575.42")
+        self.transmitter_bandwidth.set("24")
+        self.receiver_bandwidth.set("24")
+        self.sampling_frequency.set("100")
         self.num_bits.set("2048")
 
         self.boc_m.set("5")
@@ -287,6 +287,9 @@ class GnssApp:
             return float(var.get())
         except ValueError as e:
             raise ValueError(f"{lbl} must be a number") from e
+
+    def parse_mhz(self,var,lbl):
+        return self.parse_float(var,lbl) * 1e6
 
     def parse_int(self,var,lbl):
         try:
@@ -393,11 +396,11 @@ class GnssApp:
         ov=boc_psd*comp_psd
         lo=cf-rbw/2
         hi=cf+rbw/2
-        self.overlap_axis.plot(boc_freqs,ov,color="#2ca02c",linewidth=1.2,label="PSD overlap")
-        self.overlap_axis.axvspan(lo,hi,color="#d62728",alpha=0.12,label="Receiver band")
+        self.overlap_axis.plot(boc_freqs/1e6,ov,color="#2ca02c",linewidth=1.2,label="PSD overlap")
+        self.overlap_axis.axvspan(lo/1e6,hi/1e6,color="#d62728",alpha=0.12,label="Receiver band")
         ssc_db_text=f"{ssc_db:.2f} dB" if np.isfinite(ssc_db) else "-inf dB"
         self.overlap_axis.set_title(f"SSC overlap   |  SSC = {ssc:.3e}  |  {ssc_db_text}")
-        self.overlap_axis.set_xlabel("Frequency (Hz)")
+        self.overlap_axis.set_xlabel("Frequency (MHz)")
         self.overlap_axis.set_ylabel("PSD product")
         self.overlap_axis.grid(True,alpha=0.3)
         self.overlap_axis.legend(loc="upper right")
@@ -458,7 +461,7 @@ class GnssApp:
             hi=self.current_freq_max
 
         self.redraw_overlay_axis(lo,hi)
-        self.overlap_axis.set_xlim(lo,hi)
+        self.overlap_axis.set_xlim(lo/1e6,hi/1e6)
         self.canvas.draw_idle()
 
 
@@ -481,13 +484,14 @@ class GnssApp:
         comp_display=self.scale_for_display(comp_psd)
 
 
-        self.overlay_axis.plot(boc_freqs,boc_display,color="#1f77b4",linewidth=1.2,label="BOC(5,2)")
-        self.overlay_axis.plot(comp_freqs,comp_display,color="#ff7f0e",linewidth=1.2,label=self.overlay_label)
+        self.overlay_axis.plot(boc_freqs/1e6,boc_display,color="#1f77b4",linewidth=1.2,label="BOC(5,2)")
+        self.overlay_axis.plot(comp_freqs/1e6,comp_display,color="#ff7f0e",linewidth=1.2,label=self.overlay_label)
         self.overlay_axis.set_title("Overlay of normalized PSDs")
+        self.overlay_axis.set_xlabel("Frequency (MHz)")
         self.overlay_axis.set_ylabel("PSD (display-scaled)")
         self.overlay_axis.grid(True,alpha=0.3)
         self.overlay_axis.legend(loc="upper right")
-        self.overlay_axis.set_xlim(lo,hi)
+        self.overlay_axis.set_xlim(lo/1e6,hi/1e6)
 
 
 
@@ -519,10 +523,10 @@ class GnssApp:
 
     def run_demo_analysis(self):
         try:
-            cf=self.parse_float(self.demo_center_frequency,"Center Frequency")
-            tbw=self.parse_float(self.demo_transmitter_bandwidth,"Transmitter Bandwidth")
-            rbw=self.parse_float(self.demo_receiver_bandwidth,"Receiver Bandwidth")
-            fs=self.parse_float(self.demo_sampling_frequency,"Sampling Frequency")
+            cf=self.parse_mhz(self.demo_center_frequency,"Center Frequency")
+            tbw=self.parse_mhz(self.demo_transmitter_bandwidth,"Transmitter Bandwidth")
+            rbw=self.parse_mhz(self.demo_receiver_bandwidth,"Receiver Bandwidth")
+            fs=self.parse_mhz(self.demo_sampling_frequency,"Sampling Frequency")
 
             n=self.parse_int(self.demo_num_bits,"Number of Bits")
 
@@ -541,11 +545,11 @@ class GnssApp:
 
     def run_analysis(self):
         try:
-            cf=self.parse_float(self.center_frequency,"Center Frequency")
-            tbw=self.parse_float(self.transmitter_bandwidth,"Transmitter Bandwidth")
+            cf=self.parse_mhz(self.center_frequency,"Center Frequency")
+            tbw=self.parse_mhz(self.transmitter_bandwidth,"Transmitter Bandwidth")
 
-            rbw=self.parse_float(self.receiver_bandwidth,"Receiver Bandwidth")
-            fs=self.parse_float(self.sampling_frequency,"Sampling Frequency")
+            rbw=self.parse_mhz(self.receiver_bandwidth,"Receiver Bandwidth")
+            fs=self.parse_mhz(self.sampling_frequency,"Sampling Frequency")
             n=self.parse_int(self.num_bits,"Number of Bits")
 
             if fs<=0:
